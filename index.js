@@ -59,7 +59,7 @@ bot.command('info', async (ctx) => {
 	}
 });
 
-// приветствие нового пользователя в чате
+// Приветствие нового пользователя в чате
 bot.on('new_chat_members', async (ctx) => {
 	await ctx.replyWithHTML(helloNewMemberMessage(ctx), disableWebPagePreview);
 	return ctx.replyWithSticker(
