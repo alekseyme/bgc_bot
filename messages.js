@@ -30,7 +30,7 @@ export const helpMessage = `
 `;
 
 export const helloNewMemberMessage = (ctx) => `
-Приветствуем тебя, дорогой друг, @${ctx.update.message.new_chat_participant.username}! Ты попал в чат настольщиков всего Воронежа. <a href="https://t.me/c/1417138525/39734">кликни</a>, чтобы прочитать важную информацию или пиши <a href="https://t.me/bgcvrn_bot">мне</a>, чтобы узнать больше
+Приветствуем тебя, дорогой друг, @${ctx.update.message.new_chat_participant.username}! Ты попал в чат настольщиков всего Воронежа. <a href="https://t.me/c/1417138525/39734">кликни</a>, чтобы прочитать важную информацию или пиши <a href="https://t.me/BGC_Voronezh_bot">мне</a>, чтобы узнать больше
 `;
 
 export const getResultEvent = (ctx) => `
