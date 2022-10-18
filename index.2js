@@ -1,0 +1,210 @@
+import TelegramApi from 'node-telegram-bot-api';
+import { eventsOptions, forceReply, createNewEventOptions } from './options.js';
+
+const CHANNEL_ID = '-1001676895168';
+
+const MESSAGES = {
+	yourEvents: 'Вот список твоих событий',
+	allEvents: 'Вот список доступных игровых событий',
+	whatGame: 'На какую игру/игры собираешь?',
+	whatImg: 'По желанию отправь картинку для поста, если нет - поставь прочерк',
+	whatTime: 'Укажи дату и время события',
+	whatAdres: 'Адрес/Место встречи',
+	whatPeople: 'Сколько человек необходимо',
+	whatOther: 'Если нужно, укажи доп. инфо, если нет - поставь прочерк',
+	readyToPublish: 'Всё готово к публикации. Публикуем?',
+};
+
+const token = '5533613924:AAFpqSSi3F5dsajRtU17E6LCmvXEMHPQLoE';
+
+const bot = new TelegramApi(token, { polling: true });
+
+const room = {
+	user: '',
+	game: '',
+	gameImg: '',
+	datetime: '',
+	adres: '',
+	people: '',
+	other: '',
+};
+
+const resetRoom = () => {
+	room.user = '';
+	room.game = '';
+	room.datetime = '';
+	room.adres = '';
+	room.people = '';
+	room.other = '';
+};
+
+const roomToLog = () => {
+	console.log(room);
+};
+
+const start = () => {
+	bot.setMyCommands(
+		[
+			{ command: '/info', description: 'Полезные ссылки' },
+			{ command: '/events', description: 'События' },
+		],
+		{
+			scope: JSON.stringify({
+				type: 'all_private_chats',
+			}),
+		},
+	);
+
+	bot.on('channel_post', async (msg) => {
+		console.log('channel_post', msg);
+	});
+
+	bot.on('message', async (msg) => {
+		console.log('message', msg);
+		const text = msg.text;
+		const chatId = msg.chat.id;
+		const isReply = Boolean(msg.reply_to_message);
+		const isNewMember = Boolean(msg.new_chat_members);
+		const isPrivate = msg.chat.type === 'private';
+
+		// Hello to new user
+		if (!isPrivate && isNewMember) {
+			await bot.sendMessage(
+				chatId,
+				`Привет, @${msg.new_chat_member.username}!\r\nЧитай закреп или пиши мне (@bgcvrn_bot) в ЛС, чтобы получить больше информации о нашем сообществе!`,
+			);
+			return bot.sendSticker(
+				chatId,
+				'CAACAgIAAxUAAWMZsncx2sW_H8sUIYO_8UERl_7PAALdFwAC7pr5SU4rnuOnZivCKQQ',
+			);
+		}
+
+		// Only private chat
+		if (isPrivate) {
+			if (text === '/start') {
+				return bot.sendMessage(
+					chatId,
+					'Приветствую тебя, дорогой друг!\r\nИспользуй меню, чтобы перейти к нужному разделу :)',
+				);
+			}
+
+			// if (text === '/photo') {
+			// 	return bot.sendPhoto(
+			// 		chatId,
+			// 		'AgACAgIAAxkBAAICm2MZ2I5FroPj-qwrK3CjPo2lwR7yAAJ0vTEbHA3RSP5MiSE7nlmxAQADAgADcwADKQQ',
+			// 		{
+			// 			caption: 'asdasd\r\nqwdqwdqwd\r\nfwefwef',
+			// 		},
+			// 	);
+			// }
+
+			if (text === '/info') {
+				return bot.sendMessage(
+					chatId,
+					`
+					О сборах в Воронеже ты можешь узнать в группе новостей https://t.me/+VjtidypD88g5NWFi. Не отключай там звук, чтобы ничего не пропустить!\nЕсли ты хочешь дать объявление о сборе, то напиши - /events\nТак же у нас есть барахолка настольных игр Воронежа. Внимательно читаем закреплённое сообщение с правила выкладывания - постов https://t.me/bni_voronezh
+					`,
+				);
+			}
+
+			if (text === '/events') {
+				return bot.sendMessage(chatId, 'Что желаем?', eventsOptions);
+			}
+
+			if (isReply) {
+				const replyFrom = msg.reply_to_message.text;
+
+				switch (replyFrom) {
+					case MESSAGES.whatGame:
+						room.game = text;
+						roomToLog();
+						await bot.deleteMessage(chatId, msg.message_id);
+						await bot.deleteMessage(chatId, msg.reply_to_message.message_id);
+						return bot.sendMessage(chatId, MESSAGES.whatTime, forceReply);
+
+					// case MESSAGES.whatImg:
+					// 	room.gameImg = msg?.photo ? msg.photo[0].file_id : null;
+					// 	roomToLog();
+					// 	await bot.deleteMessage(chatId, msg.message_id);
+					// 	await bot.deleteMessage(chatId, msg.reply_to_message.message_id);
+					// 	return bot.sendMessage(chatId, MESSAGES.whatTime, forceReply);
+
+					case MESSAGES.whatTime:
+						room.datetime = text;
+						roomToLog();
+						await bot.deleteMessage(chatId, msg.message_id);
+						await bot.deleteMessage(chatId, msg.reply_to_message.message_id);
+						return bot.sendMessage(chatId, MESSAGES.whatAdres, forceReply);
+
+					case MESSAGES.whatAdres:
+						room.adres = text;
+						roomToLog();
+						await bot.deleteMessage(chatId, msg.message_id);
+						await bot.deleteMessage(chatId, msg.reply_to_message.message_id);
+						return bot.sendMessage(chatId, MESSAGES.whatPeople, forceReply);
+
+					case MESSAGES.whatPeople:
+						room.people = text;
+						roomToLog();
+						await bot.deleteMessage(chatId, msg.message_id);
+						await bot.deleteMessage(chatId, msg.reply_to_message.message_id);
+						return bot.sendMessage(chatId, MESSAGES.whatOther, forceReply);
+
+					case MESSAGES.whatOther:
+						room.other = text;
+						roomToLog();
+						await bot.deleteMessage(chatId, msg.message_id);
+						await bot.deleteMessage(chatId, msg.reply_to_message.message_id);
+						return bot.sendMessage(
+							chatId,
+							MESSAGES.readyToPublish,
+							createNewEventOptions,
+						);
+
+					default:
+						break;
+				}
+			}
+
+			bot.deleteMessage(chatId, msg.message_id);
+		}
+	});
+
+	bot.on('callback_query', async (msg) => {
+		const data = msg.data;
+		const chatId = msg.message.chat.id;
+
+		if (data === 'myGames') {
+			return bot.sendMessage(chatId, MESSAGES.yourEvents);
+		}
+
+		if (data === 'newGameRoom') {
+			resetRoom();
+			await bot.deleteMessage(chatId, msg.message.message_id);
+			roomToLog();
+			return bot.sendMessage(chatId, MESSAGES.whatGame, forceReply);
+		}
+
+		if (data === 'subscribeOnGame') {
+			return bot.sendMessage(chatId, MESSAGES.allEvents);
+		}
+
+		if (data === 'createNewEvent') {
+			room.user = '@' + msg.from.username;
+			const eventContent = `Собирает: ${room.user}.\r\nИграем в: ${room.game}.\r\nВремя: ${room.datetime}.\r\nМесто: ${room.adres}.\r\nКол-во человек: ${room.people}.\r\nДоп. инфо: ${room.other}.`;
+			roomToLog();
+
+			await bot.deleteMessage(chatId, msg.message.message_id);
+			if (room.gameImg) {
+				bot.sendPhoto(CHANNEL_ID, room.gameImg, {
+					caption: eventContent,
+				});
+			} else {
+				await bot.sendMessage(CHANNEL_ID, eventContent);
+			}
+			return bot.sendMessage(chatId, 'Событие успешно опубликовано!');
+		}
+	});
+};
+
+start();
