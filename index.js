@@ -70,5 +70,5 @@ bot.on('new_chat_members', async (ctx) => {
 bot.launch();
 
 // Enable graceful stop
-// process.once('SIGINT', () => bot.stop('SIGINT'));
-// process.once('SIGTERM', () => bot.stop('SIGTERM'));
+process.once('SIGINT', () => bot.stop('SIGINT'));
+process.once('SIGTERM', () => bot.stop('SIGTERM'));
