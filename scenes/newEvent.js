@@ -18,8 +18,6 @@ const checkRequires = async (ctx) => {
 	}
 };
 
-const CHANNEL_ID = '-1001676895168';
-
 const whatGame = new Composer();
 whatGame.on(['sticker', 'audio', 'video', 'voice', 'document', 'gif', 'photo'], async (ctx) => {
 	return ctx.deleteMessage();
@@ -276,13 +274,17 @@ resultStep.action('store_game', async (ctx) => {
 		await ctx.answerCbQuery();
 		const resultReply = getResultEvent(ctx);
 		if (ctx.wizard.state.data.img !== 'none') {
-			await ctx.telegram.sendPhoto(CHANNEL_ID, ctx.wizard.state.data.img, {
-				caption: resultReply,
-				parse_mode: 'HTML',
-			});
+			await ctx.telegram.sendPhoto(
+				process.env.NEW_EVENT_CHANNEL_ID,
+				ctx.wizard.state.data.img,
+				{
+					caption: resultReply,
+					parse_mode: 'HTML',
+				},
+			);
 			await ctx.replyWithHTML(EVENT_MESSAGES.successPublish, disableWebPagePreview);
 		} else {
-			await ctx.telegram.sendMessage(CHANNEL_ID, resultReply, {
+			await ctx.telegram.sendMessage(process.env.NEW_EVENT_CHANNEL_ID, resultReply, {
 				parse_mode: 'HTML',
 			});
 			await ctx.replyWithHTML(EVENT_MESSAGES.successPublish, disableWebPagePreview);
