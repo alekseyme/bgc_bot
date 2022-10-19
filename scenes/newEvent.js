@@ -35,6 +35,7 @@ whatGame.on('text', async (ctx) => {
 		return ctx.wizard.next();
 	} catch (error) {
 		console.log(error);
+		return ctx.scene.leave();
 	}
 });
 
@@ -59,6 +60,7 @@ whatDay.on('text', async (ctx) => {
 		return ctx.wizard.next();
 	} catch (error) {
 		console.log(error);
+		return ctx.scene.leave();
 	}
 });
 
@@ -93,6 +95,7 @@ whatStartTime.on('text', async (ctx) => {
 		return ctx.wizard.next();
 	} catch (error) {
 		console.log(error);
+		return ctx.scene.leave();
 	}
 });
 
@@ -118,6 +121,7 @@ whatEndTime.on('text', async (ctx) => {
 		return ctx.wizard.next();
 	} catch (error) {
 		console.log(error);
+		return ctx.scene.leave();
 	}
 });
 
@@ -143,6 +147,7 @@ whatPerson.on('text', async (ctx) => {
 		return ctx.wizard.next();
 	} catch (error) {
 		console.log(error);
+		return ctx.scene.leave();
 	}
 });
 
@@ -168,6 +173,7 @@ whatPlace.on('text', async (ctx) => {
 		return ctx.wizard.next();
 	} catch (error) {
 		console.log(error);
+		return ctx.scene.leave();
 	}
 });
 
@@ -193,6 +199,7 @@ whatOther.on('text', async (ctx) => {
 		return ctx.wizard.next();
 	} catch (error) {
 		console.log(error);
+		return ctx.scene.leave();
 	}
 });
 
@@ -222,6 +229,7 @@ whatImg.on('text', async (ctx) => {
 		return ctx.wizard.next();
 	} catch (error) {
 		console.log(error);
+		return ctx.scene.leave();
 	}
 });
 
@@ -240,6 +248,7 @@ resultStep.on(['photo'], async (ctx) => {
 		);
 	} catch (error) {
 		console.log(error);
+		return ctx.scene.leave();
 	}
 });
 
@@ -258,6 +267,7 @@ resultStep.action('wo_photo', async (ctx) => {
 		return;
 	} catch (error) {
 		console.log(error);
+		return ctx.scene.leave();
 	}
 });
 
@@ -280,6 +290,7 @@ resultStep.action('store_game', async (ctx) => {
 		return ctx.scene.leave();
 	} catch (error) {
 		console.log(error);
+		return ctx.scene.leave();
 	}
 });
 
