@@ -232,10 +232,22 @@ whatImg.on('text', async (ctx) => {
 });
 
 const resultStep = new Composer();
-resultStep.on(['text', 'sticker', 'audio', 'video', 'voice', 'document', 'gif'], async (ctx) => {
+resultStep.on(['sticker', 'audio', 'video', 'voice', 'document', 'gif'], async (ctx) => {
 	return ctx.deleteMessage();
 });
-resultStep.on(['photo'], async (ctx) => {
+resultStep.on('text', async (ctx) => {
+	try {
+		if (ctx.message.text === '/cancel') {
+			await ctx.reply(EVENT_MESSAGES.cancel);
+			return ctx.scene.leave();
+		}
+		return ctx.deleteMessage();
+	} catch (error) {
+		console.log(error);
+		return ctx.scene.leave();
+	}
+});
+resultStep.on('photo', async (ctx) => {
 	try {
 		ctx.wizard.state.data.img = ctx.message.photo[0].file_id;
 		console.log(ctx.wizard.state);
