@@ -262,21 +262,25 @@ resultStep.action('wo_photo', async (ctx) => {
 });
 
 resultStep.action('store_game', async (ctx) => {
-	await ctx.answerCbQuery();
-	const resultReply = getResultEvent(ctx);
-	if (ctx.wizard.state.data.img !== 'none') {
-		await ctx.telegram.sendPhoto(CHANNEL_ID, ctx.wizard.state.data.img, {
-			caption: resultReply,
-			parse_mode: 'HTML',
-		});
-		await ctx.replyWithHTML(EVENT_MESSAGES.successPublish, disableWebPagePreview);
-	} else {
-		await ctx.telegram.sendMessage(CHANNEL_ID, resultReply, {
-			parse_mode: 'HTML',
-		});
-		await ctx.replyWithHTML(EVENT_MESSAGES.successPublish, disableWebPagePreview);
+	try {
+		await ctx.answerCbQuery();
+		const resultReply = getResultEvent(ctx);
+		if (ctx.wizard.state.data.img !== 'none') {
+			await ctx.telegram.sendPhoto(CHANNEL_ID, ctx.wizard.state.data.img, {
+				caption: resultReply,
+				parse_mode: 'HTML',
+			});
+			await ctx.replyWithHTML(EVENT_MESSAGES.successPublish, disableWebPagePreview);
+		} else {
+			await ctx.telegram.sendMessage(CHANNEL_ID, resultReply, {
+				parse_mode: 'HTML',
+			});
+			await ctx.replyWithHTML(EVENT_MESSAGES.successPublish, disableWebPagePreview);
+		}
+		return ctx.scene.leave();
+	} catch (error) {
+		console.log(error);
 	}
-	return ctx.scene.leave();
 });
 
 export const newEventScene = new Scenes.WizardScene(
