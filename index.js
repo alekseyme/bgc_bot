@@ -3,6 +3,7 @@ import { Telegraf, Scenes, session } from 'telegraf';
 import { newEventScene } from './scenes/newEvent.js';
 import { helloNewMemberMessage, helpMessage, infoMessage, startMessage } from './messages.js';
 import { disableWebPagePreview } from './options.js';
+import { generateRandomPhrase } from './phrases.js';
 dotenv.config();
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
@@ -20,6 +21,20 @@ bot.telegram.setMyCommands(
 		scope: JSON.stringify({
 			type: 'all_private_chats',
 		}),
+	},
+);
+
+bot.hears(
+	(text) => {
+		return text.toLowerCase() === 'где бот';
+	},
+	(ctx) => {
+		const isPrivate = ctx.message.chat.type === 'private';
+		if (isPrivate) {
+			return;
+		}
+		ctx.reply(`Я здесь`);
+		// ctx.reply(`Я здесь. ${generateRandomPhrase()}`);
 	},
 );
 
